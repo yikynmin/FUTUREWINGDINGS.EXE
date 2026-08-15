@@ -21,7 +21,7 @@ W҉̤̗I҉͓̭̝N̸͙̪̗G̶̗̮͗D̴̯̥Î̴̪̝N̷͙͕Ğ̶͍S҉̖̱̦
 
 
 This is a near-future speculation.
-How might we disrupt the surveillance and collection of text?
+How can we disrupt the automated collection and censorship of text?
 If we imagine a form of reading that humans can understand but computers cannot as a possible direction for reading in the future, could a typeface made up of symbols, like Wingdings, be repurposed for a new function and use?
 Could this give rise to Wingdings Neue?
 
