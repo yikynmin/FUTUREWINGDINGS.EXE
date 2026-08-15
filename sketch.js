@@ -5760,115 +5760,59 @@ function drawIntro() {
 
 
       let lineChars =
-        Array.from(
-          line
-        );
+  Array.from(
+    line
+  );
 
 
-      if (
-        isChromeBrowser
-      ) {
-
-        // Chrome: 한 줄 전체를 한 번에 렌더링해서 자간을 안정화한다.
-        text(
-          line,
-          left,
-          y
-        );
+let originalPrefix =
+  "";
 
 
-        let originalPrefix =
-          "";
+lineChars.forEach(
+  function (original) {
+
+    let state =
+      introCharStates[
+        stateIndex
+      ];
 
 
-        lineChars.forEach(
-          function (original) {
-
-            let state =
-              introCharStates[
-                stateIndex
-              ];
+    let display =
+      original;
 
 
-            if (
-              state &&
-              state.glitching &&
-              original !== " "
-            ) {
+    if (
+      state &&
+      state.glitching &&
+      original !== " "
+    ) {
 
-              let charX =
-                left +
-                textWidth(
-                  originalPrefix
-                );
+      display =
+        state.glitchChar;
+    }
 
 
-              text(
-                state.glitchChar,
-                charX,
-                y
-              );
-            }
+    let charX =
+      left +
+      textWidth(
+        originalPrefix
+      );
 
 
-            originalPrefix +=
-              original;
-
-            stateIndex++;
-          }
-        );
-
-      } else {
-
-        // Safari: 기존의 문자 대체형 글리치를 유지한다.
-        let originalPrefix =
-          "";
+    text(
+      display,
+      charX,
+      y
+    );
 
 
-        lineChars.forEach(
-          function (original) {
+    originalPrefix +=
+      original;
 
-            let state =
-              introCharStates[
-                stateIndex
-              ];
-
-
-            let display =
-              original;
-
-
-            if (
-              state &&
-              state.glitching &&
-              original !== " "
-            ) {
-
-              display =
-                state.glitchChar;
-            }
-
-
-            let charX =
-              left +
-              textWidth(
-                originalPrefix
-              );
-
-
-            text(
-              display,
-              charX,
-              y
-            );
-
-
-            originalPrefix +=
-              original;
-
-            stateIndex++;
-          }
-        );
+    stateIndex++;
+  }
+);
       }
 
 
