@@ -178,6 +178,8 @@ const SPEED_OPTIONS = [
 const UI_FONT =
   '"Pixel Times", serif';
 
+let isChromeBrowser = false;
+
 
 const FONT_OPTIONS = [
 
@@ -516,9 +518,147 @@ let introLayoutCache = {
 };
 
 // =====================================================
+// BROWSER
+// =====================================================
+
+function detectChromeBrowser() {
+
+  const ua =
+    navigator.userAgent;
+
+
+  return (
+    /Chrome|CriOS/.test(ua) &&
+    !/Edg|EdgiOS|OPR|OPiOS/.test(ua)
+  );
+}
+
+
+function showSafariNoticeForChrome() {
+
+  if (
+    !isChromeBrowser
+  ) {
+    return;
+  }
+
+
+  const notice =
+    document.createElement(
+      "div"
+    );
+
+
+  notice.innerHTML = `
+    <div style="
+      font-size:10px;
+      margin-bottom:8px;
+      font-weight:700;
+    ">
+      BROWSER NOTICE
+    </div>
+
+    <div style="
+      font-size:10px;
+      line-height:1.45;
+    ">
+      THIS PROJECT IS OPTIMIZED FOR SAFARI.<br>
+      TYPOGRAPHIC RENDERING AND GLITCH EFFECTS<br>
+      MAY DIFFER IN CHROME.
+    </div>
+
+    <button
+      type="button"
+      style="
+        width:100%;
+        height:24px;
+        margin-top:10px;
+        padding:0;
+        border:2px outset #CCCCCC;
+        border-radius:0;
+        background:#BEBEBE;
+        color:#111111;
+        font-family:${UI_FONT};
+        font-size:9px;
+        font-weight:700;
+        cursor:pointer;
+      "
+    >
+      CONTINUE
+    </button>
+  `;
+
+
+  Object.assign(
+    notice.style,
+    {
+      position: "fixed",
+      left: "50%",
+      top: "50%",
+      transform: "translate(-50%, -50%)",
+      width: "300px",
+      padding: "10px",
+      boxSizing: "border-box",
+      background: "#BEBEBE",
+      border: "3px outset #CCCCCC",
+      color: "#111111",
+      fontFamily: UI_FONT,
+      zIndex: "10000"
+    }
+  );
+
+
+  document.body.appendChild(
+    notice
+  );
+
+
+  const button =
+    notice.querySelector(
+      "button"
+    );
+
+
+  button.addEventListener(
+    "mousedown",
+    function () {
+      button.style.border =
+        "2px inset #CCCCCC";
+      button.style.background =
+        "#FFFFFF";
+    }
+  );
+
+
+  button.addEventListener(
+    "mouseup",
+    function () {
+      button.style.border =
+        "2px outset #CCCCCC";
+      button.style.background =
+        "#BEBEBE";
+    }
+  );
+
+
+  button.addEventListener(
+    "click",
+    function () {
+      notice.remove();
+      restoreTyping();
+    }
+  );
+}
+
+
+// =====================================================
 // SETUP
 // =====================================================
 function setup() {
+
+  isChromeBrowser =
+    detectChromeBrowser();
+
 
   createCanvas(
     windowWidth,
@@ -564,6 +704,26 @@ function setup() {
 
   createContactWindow();
   initOCR();
+
+  showSafariNoticeForChrome();
+
+
+  if (
+    document.fonts &&
+    document.fonts.ready
+  ) {
+
+    document.fonts.ready.then(
+      function () {
+
+        introLayoutCache.source =
+          "";
+
+        introLayoutCache.maxWidth =
+          -1;
+      }
+    );
+  }
 }
 
 async function ensureTesseractLoaded() {
@@ -5482,29 +5642,29 @@ function drawIntro() {
 
 
   if (
-  introLanguage ===
-  "KOR"
-) {
+    introLanguage ===
+    "KOR"
+  ) {
 
-  textFont(
-    "Apple SD Gothic Neo"
+    textFont(
+      "Apple SD Gothic Neo"
+    );
+
+  } else {
+
+    textFont(
+      "Pixel Times"
+    );
+  }
+
+
+  textStyle(
+    NORMAL
   );
 
-} else {
-
-  textFont(
-    "Pixel Times"
+  textSize(
+    14
   );
-}
-
-
-textStyle(
-  NORMAL
-);
-
-textSize(
-  14
-);
 
 
   let lineHeight =
@@ -5513,47 +5673,58 @@ textSize(
 
   let lines;
 
-if (
-  introLayoutCache.source !==
-  source ||
-
-  introLayoutCache.maxWidth !==
-  maxWidth
-) {
-
-  introLayoutCache.source =
-    source;
-
-  introLayoutCache.maxWidth =
-    maxWidth;
-
-  introLayoutCache.lines =
-    wrapIntroText(
-      source,
-      maxWidth
-    );
-}
-
-
-lines =
-  introLayoutCache.lines;
-
 
   if (
-  introLanguage ===
-  "KOR"
-) {
+    introLayoutCache.source !==
+    source ||
 
-  textFont(
-    "Apple SD Gothic Neo"
+    introLayoutCache.maxWidth !==
+    maxWidth
+  ) {
+
+    introLayoutCache.source =
+      source;
+
+    introLayoutCache.maxWidth =
+      maxWidth;
+
+    introLayoutCache.lines =
+      wrapIntroText(
+        source,
+        maxWidth
+      );
+  }
+
+
+  lines =
+    introLayoutCache.lines;
+
+
+  // wrap 계산과 실제 렌더링에 같은 폰트를 사용한다.
+  if (
+    introLanguage ===
+    "KOR"
+  ) {
+
+    textFont(
+      "Apple SD Gothic Neo"
+    );
+
+  } else {
+
+    textFont(
+      "Pixel Times"
+    );
+  }
+
+
+  textStyle(
+    NORMAL
   );
 
-} else {
-
-  textFont(
-    "Pixel Times"
+  textSize(
+    14
   );
-}
 
   textAlign(
     LEFT,
@@ -5588,81 +5759,117 @@ lines =
       }
 
 
-      // ORIGINAL LINE
-
-fill(
-  textColor
-);
-
-noStroke();
-
-text(
-  line,
-  left,
-  y
-);
-
-
-// GLITCH OVERLAY
-
-let lineChars =
-  Array.from(
-    line
-  );
-
-let originalPrefix =
-  "";
-
-
-lineChars.forEach(
-  function (original) {
-
-    let state =
-      introCharStates[
-        stateIndex
-      ];
-
-
-    if (
-      state &&
-      state.glitching &&
-      original !== " "
-    ) {
-
-      let charX =
-        left +
-        textWidth(
-          originalPrefix
+      let lineChars =
+        Array.from(
+          line
         );
 
 
-      let charWidth =
-        textWidth(
-          originalPrefix +
-          original
-        ) -
-        textWidth(
-          originalPrefix
+      if (
+        isChromeBrowser
+      ) {
+
+        // Chrome: 한 줄 전체를 한 번에 렌더링해서 자간을 안정화한다.
+        text(
+          line,
+          left,
+          y
         );
 
-      fill(
-        textColor
-      );
 
-      text(
-        state.glitchChar,
-        charX,
-        y
-      );
-    }
+        let originalPrefix =
+          "";
 
 
-    originalPrefix +=
-      original;
+        lineChars.forEach(
+          function (original) {
 
-    stateIndex++;
-  }
-);
+            let state =
+              introCharStates[
+                stateIndex
+              ];
+
+
+            if (
+              state &&
+              state.glitching &&
+              original !== " "
+            ) {
+
+              let charX =
+                left +
+                textWidth(
+                  originalPrefix
+                );
+
+
+              text(
+                state.glitchChar,
+                charX,
+                y
+              );
+            }
+
+
+            originalPrefix +=
+              original;
+
+            stateIndex++;
+          }
+        );
+
+      } else {
+
+        // Safari: 기존의 문자 대체형 글리치를 유지한다.
+        let originalPrefix =
+          "";
+
+
+        lineChars.forEach(
+          function (original) {
+
+            let state =
+              introCharStates[
+                stateIndex
+              ];
+
+
+            let display =
+              original;
+
+
+            if (
+              state &&
+              state.glitching &&
+              original !== " "
+            ) {
+
+              display =
+                state.glitchChar;
+            }
+
+
+            let charX =
+              left +
+              textWidth(
+                originalPrefix
+              );
+
+
+            text(
+              display,
+              charX,
+              y
+            );
+
+
+            originalPrefix +=
+              original;
+
+            stateIndex++;
+          }
+        );
+      }
 
 
       y +=
@@ -5673,292 +5880,274 @@ lineChars.forEach(
 
   pop();
 
-// =====================================================
-// BOTTOM WELCOME
-// ようこそ + KAOMOJI
-// =====================================================
 
-let welcomeLeft =
-  SIDEBAR_W + 35;
+  // =====================================================
+  // BOTTOM WELCOME
+  // ようこそ + KAOMOJI
+  // =====================================================
 
-let welcomeRight =
-  width - 45;
+  let welcomeLeft =
+    SIDEBAR_W + 35;
 
-let welcomeWidth =
-  welcomeRight -
-  welcomeLeft;
+  let welcomeRight =
+    width - 45;
 
-let welcomeY =
-  height - 20;
+  let welcomeWidth =
+    welcomeRight -
+    welcomeLeft;
 
-
-let yokoText =
-  "ようこそ";
-
-let kaoText =
-  "(ˆ⩌⩊⩌ˆ)੭";
+  let welcomeY =
+    height - 20;
 
 
-// =====================================================
-// SIZE
-// =====================================================
+  let yokoText =
+    "ようこそ";
 
-let yokoSize =
-  constrain(
-    welcomeWidth * 0.3,
-    70,
-    200
+  let kaoText =
+    "(ˆ⩌⩊⩌ˆ)੭";
+
+
+  let yokoSize =
+    constrain(
+      welcomeWidth * 0.3,
+      70,
+      200
+    );
+
+  let kaoSize =
+    yokoSize * 0.4;
+
+
+  // ようこそ: 일본어 글리프가 실제로 들어 있는 명조체.
+  textFont(
+    "Hiragino Mincho ProN"
   );
 
-let kaoSize =
-  yokoSize * 0.4;
+  textStyle(
+    NORMAL
+  );
+
+  textSize(
+    yokoSize
+  );
+
+  let yokoW =
+    textWidth(
+      yokoText
+    );
 
 
-// =====================================================
-// WIDTH MEASURE
-// =====================================================
+  // Kaomoji: Menlo.
+  textFont(
+    "Menlo"
+  );
 
-textFont(
-  "Hiragino Mincho ProN"
-);
+  textStyle(
+    BOLD
+  );
 
-textStyle(
-  BOLD
-);
+  textSize(
+    kaoSize
+  );
 
-textSize(
-  yokoSize
-);
+  let kaoW =
+    textWidth(
+      kaoText
+    );
 
-let yokoW =
-  textWidth(
-    yokoText
+
+  let welcomeGap =
+    yokoSize * 0.2;
+
+  let naturalWidth =
+    yokoW +
+    welcomeGap +
+    kaoW;
+
+  let scaleFactor =
+    welcomeWidth /
+    naturalWidth;
+
+
+  scaleFactor =
+    constrain(
+      scaleFactor,
+      0.55,
+      1.35
+    );
+
+
+  yokoSize *=
+    scaleFactor;
+
+  kaoSize *=
+    scaleFactor;
+
+  welcomeGap *=
+    scaleFactor;
+
+
+  textFont(
+    "Hiragino Mincho ProN"
+  );
+
+  textStyle(
+    NORMAL
+  );
+
+  textSize(
+    yokoSize
+  );
+
+  yokoW =
+    textWidth(
+      yokoText
+    );
+
+
+  let kaoX =
+    welcomeLeft +
+    yokoW +
+    welcomeGap;
+
+
+  let shadowOffsetX =
+    7;
+
+  let shadowOffsetY =
+    7;
+
+  let shadowColor =
+    color(0);
+
+
+  shadowColor.setAlpha(
+    90
   );
 
 
-textFont(
-  "Courier New"
-);
+  // ようこそ shadow
+  textFont(
+    "Hiragino Mincho ProN"
+  );
 
-textStyle(
-  NORMAL
-);
+  textStyle(
+    NORMAL
+  );
 
-textSize(
-  kaoSize
-);
+  textSize(
+    yokoSize
+  );
 
-let kaoW =
-  textWidth(
-    kaoText
+  textAlign(
+    LEFT,
+    BOTTOM
+  );
+
+  fill(
+    shadowColor
+  );
+
+  noStroke();
+
+  text(
+    yokoText,
+    welcomeLeft +
+    shadowOffsetX,
+    welcomeY +
+    shadowOffsetY
   );
 
 
-let welcomeGap =
-  yokoSize * 0.2;
-
-let naturalWidth =
-  yokoW +
-  welcomeGap +
-  kaoW;
-
-let targetWidth =
-  welcomeWidth;
-
-let scaleFactor =
-  targetWidth /
-  naturalWidth;
-
-scaleFactor =
-  constrain(
-    scaleFactor,
-    0.55,
-    1.35
+  // kaomoji shadow
+  textFont(
+    "Menlo"
   );
 
-yokoSize *=
-  scaleFactor;
+  textStyle(
+    BOLD
+  );
 
-kaoSize *=
-  scaleFactor;
+  textSize(
+    kaoSize
+  );
 
-welcomeGap *=
-  scaleFactor;
+  textAlign(
+    LEFT,
+    BOTTOM
+  );
 
+  fill(
+    shadowColor
+  );
 
-// =====================================================
-// FINAL WIDTH RECALC
-// =====================================================
-
-textFont(
-  "Hiragino Mincho ProN"
-);
-
-textStyle(
-  NORMAL
-);
-
-textSize(
-  yokoSize
-);
-
-yokoW =
-  textWidth(
-    yokoText
+  text(
+    kaoText,
+    kaoX +
+    shadowOffsetX,
+    welcomeY +
+    shadowOffsetY
   );
 
 
-let kaoX =
-  welcomeLeft +
-  yokoW +
-  welcomeGap;
+  // ようこそ main
+  textFont(
+    "Hiragino Mincho ProN"
+  );
+
+  textStyle(
+    NORMAL
+  );
+
+  textSize(
+    yokoSize
+  );
+
+  textAlign(
+    LEFT,
+    BOTTOM
+  );
+
+  fill(
+    textColor
+  );
+
+  noStroke();
+
+  text(
+    yokoText,
+    welcomeLeft,
+    welcomeY
+  );
 
 
-// =====================================================
-// SHADOW
-// =====================================================
+  // kaomoji main
+  textFont(
+    "Menlo"
+  );
 
-let shadowOffsetX = 7;
-let shadowOffsetY = 7;
+  textStyle(
+    BOLD
+  );
 
-let shadowColor =
-  color(0);
+  textSize(
+    kaoSize
+  );
 
-shadowColor.setAlpha(
-  90
-);
+  textAlign(
+    LEFT,
+    BOTTOM
+  );
 
+  fill(
+    textColor
+  );
 
-// ようこそ shadow
-
-textFont(
-  "Hiragino Mincho ProN"
-);
-
-textStyle(
-  NORMAL
-);
-
-textSize(
-  yokoSize
-);
-
-textAlign(
-  LEFT,
-  BOTTOM
-);
-
-fill(
-  shadowColor
-);
-
-noStroke();
-
-text(
-  yokoText,
-  welcomeLeft +
-  shadowOffsetX,
-  welcomeY +
-  shadowOffsetY
-);
-
-
-// kaomoji shadow
-
-textFont(
-  "Courier New"
-);
-
-textStyle(
-  NORMAL
-);
-
-textSize(
-  kaoSize
-);
-
-textAlign(
-  LEFT,
-  BOTTOM
-);
-
-fill(
-  shadowColor
-);
-
-text(
-  kaoText,
-  kaoX +
-  shadowOffsetX,
-  welcomeY +
-  shadowOffsetY
-);
-
-
-// =====================================================
-// MAIN TEXT
-// =====================================================
-
-// ようこそ
-
-textFont(
-  "Hiragino Mincho ProN"
-);
-
-textStyle(
-  NORMAL
-);
-
-textSize(
-  yokoSize
-);
-
-textAlign(
-  LEFT,
-  BOTTOM
-);
-
-fill(
-  textColor
-);
-
-noStroke();
-
-text(
-  yokoText,
-  welcomeLeft,
-  welcomeY
-);
-
-
-// kaomoji
-
-textFont(
-  "Courier New"
-);
-
-textStyle(
-  BOLD
-);
-
-textSize(
-  kaoSize
-);
-
-textAlign(
-  LEFT,
-  BOTTOM
-);
-
-fill(
-  textColor
-);
-
-text(
-  kaoText,
-  kaoX,
-  welcomeY
-);
+  text(
+    kaoText,
+    kaoX,
+    welcomeY
+  );
 }
 
 
@@ -6367,8 +6556,7 @@ function drawTypedText() {
     lineHeight / 2;
 
 
-  let stateIndex =
-    0;
+  let stateIndex = 0;
 
 
   for (
@@ -6430,60 +6618,123 @@ function drawTypedText() {
       );
 
 
-    let originalPrefix =
-      "";
-
-
-    for (
-      let i = 0;
-      i < chars.length;
-      i++
+    // Chrome에서는 문자열 전체를 한 번에 그려
+    // 브라우저 자체 자간/커닝을 유지한다.
+    if (
+      isChromeBrowser
     ) {
 
-      let original =
-        chars[i];
-
-
-      let state =
-        charStates[
-          stateIndex
-        ];
-
-
-      let drawX =
-        lineStartX +
-        textWidth(
-          originalPrefix
-        );
-
-
-      let display =
-        original;
-
-
-      if (
-        state &&
-        state.glitching &&
-        original !== " "
-      ) {
-
-        display =
-          state.glitchChar;
-      }
-
-
       text(
-        display,
-        drawX,
+        line,
+        lineStartX,
         y
       );
 
 
-      originalPrefix +=
-        original;
+      let originalPrefix =
+        "";
 
 
-      stateIndex++;
+      for (
+        let i = 0;
+        i < chars.length;
+        i++
+      ) {
+
+        let original =
+          chars[i];
+
+
+        let state =
+          charStates[
+            stateIndex
+          ];
+
+
+        if (
+          state &&
+          state.glitching &&
+          original !== " "
+        ) {
+
+          let drawX =
+            lineStartX +
+            textWidth(
+              originalPrefix
+            );
+
+
+          text(
+            state.glitchChar,
+            drawX,
+            y
+          );
+        }
+
+
+        originalPrefix +=
+          original;
+
+        stateIndex++;
+      }
+
+    } else {
+
+      // Safari에서는 기존의 문자 대체형 글리치를 유지한다.
+      let originalPrefix =
+        "";
+
+
+      for (
+        let i = 0;
+        i < chars.length;
+        i++
+      ) {
+
+        let original =
+          chars[i];
+
+
+        let state =
+          charStates[
+            stateIndex
+          ];
+
+
+        let drawX =
+          lineStartX +
+          textWidth(
+            originalPrefix
+          );
+
+
+        let display =
+          original;
+
+
+        if (
+          state &&
+          state.glitching &&
+          original !== " "
+        ) {
+
+          display =
+            state.glitchChar;
+        }
+
+
+        text(
+          display,
+          drawX,
+          y
+        );
+
+
+        originalPrefix +=
+          original;
+
+        stateIndex++;
+      }
     }
 
 
