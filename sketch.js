@@ -178,8 +178,6 @@ const SPEED_OPTIONS = [
 const UI_FONT =
   '"Pixel Times", serif';
 
-let isChromeBrowser = false;
-
 
 const FONT_OPTIONS = [
 
@@ -432,6 +430,10 @@ const LINE_HEIGHT_RATIO = 0.95;
 
 let titleEl;
 
+const TITLE_BASE_TEXT = "FUTURE WINGDINGS.EXE";
+let titleGlitchFrames = 0;
+let titleGlitchWait = 45;
+
 let sectionLabels = [];
 
 let bgRandomButton;
@@ -518,10 +520,11 @@ let introLayoutCache = {
 };
 
 // =====================================================
-// BROWSER
+// CHROME NOTICE
+// Chrome에서는 작업을 막지 않고 Safari 권장 안내만 띄운다.
 // =====================================================
 
-function detectChromeBrowser() {
+function isChromeBrowser() {
 
   const ua =
     navigator.userAgent;
@@ -537,7 +540,7 @@ function detectChromeBrowser() {
 function showSafariNoticeForChrome() {
 
   if (
-    !isChromeBrowser
+    !isChromeBrowser()
   ) {
     return;
   }
@@ -550,42 +553,14 @@ function showSafariNoticeForChrome() {
 
 
   notice.innerHTML = `
-    <div style="
-      font-size:10px;
-      margin-bottom:8px;
-      font-weight:700;
-    ">
+    <div style="font-size:10px;font-weight:700;margin-bottom:8px;">
       BROWSER NOTICE
     </div>
-
-    <div style="
-      font-size:10px;
-      line-height:1.45;
-    ">
+    <div style="font-size:10px;line-height:1.45;">
       THIS PROJECT IS OPTIMIZED FOR SAFARI.<br>
-      TYPOGRAPHIC RENDERING AND GLITCH EFFECTS<br>
-      MAY DIFFER IN CHROME.
+      TYPOGRAPHIC RENDERING MAY DIFFER IN CHROME.
     </div>
-
-    <button
-      type="button"
-      style="
-        width:100%;
-        height:24px;
-        margin-top:10px;
-        padding:0;
-        border:2px outset #CCCCCC;
-        border-radius:0;
-        background:#BEBEBE;
-        color:#111111;
-        font-family:${UI_FONT};
-        font-size:9px;
-        font-weight:700;
-        cursor:pointer;
-      "
-    >
-      CONTINUE
-    </button>
+    <button type="button">CONTINUE</button>
   `;
 
 
@@ -608,43 +583,42 @@ function showSafariNoticeForChrome() {
   );
 
 
-  document.body.appendChild(
-    notice
-  );
-
-
   const button =
     notice.querySelector(
       "button"
     );
 
 
-  button.addEventListener(
-    "mousedown",
-    function () {
-      button.style.border =
-        "2px inset #CCCCCC";
-      button.style.background =
-        "#FFFFFF";
+  Object.assign(
+    button.style,
+    {
+      width: "100%",
+      height: "24px",
+      marginTop: "10px",
+      padding: "0",
+      border: "2px outset #CCCCCC",
+      borderRadius: "0",
+      background: "#BEBEBE",
+      color: "#111111",
+      fontFamily: UI_FONT,
+      fontSize: "9px",
+      fontWeight: "700",
+      cursor: "pointer"
     }
   );
 
 
-  button.addEventListener(
-    "mouseup",
-    function () {
-      button.style.border =
-        "2px outset #CCCCCC";
-      button.style.background =
-        "#BEBEBE";
-    }
+  document.body.appendChild(
+    notice
   );
 
 
   button.addEventListener(
     "click",
     function () {
+
       notice.remove();
+
       restoreTyping();
     }
   );
@@ -655,10 +629,6 @@ function showSafariNoticeForChrome() {
 // SETUP
 // =====================================================
 function setup() {
-
-  isChromeBrowser =
-    detectChromeBrowser();
-
 
   createCanvas(
     windowWidth,
@@ -1924,58 +1894,8 @@ function createInterface() {
 
 titleEl =
   createDiv(
-    "FUTURE WINGDINGS.EXE"
+    TITLE_BASE_TEXT
   );
-
-  let titleGlitch =
-  createDiv(
-    "̷ ̸ ҉ ͆ ͋ ̿"
-  );
-
-titleGlitch.position(
-  PANEL_X,
-  TITLE_Y - 3
-);
-
-titleGlitch.style(
-  "position",
-  "fixed"
-);
-
-titleGlitch.style(
-  "width",
-  PANEL_WIDTH + "px"
-);
-
-titleGlitch.style(
-  "font-family",
-  UI_FONT
-);
-
-titleGlitch.style(
-  "font-size",
-  "18px"
-);
-
-titleGlitch.style(
-  "font-weight",
-  "700"
-);
-
-titleGlitch.style(
-  "letter-spacing",
-  "5px"
-);
-
-titleGlitch.style(
-  "pointer-events",
-  "none"
-);
-
-titleGlitch.style(
-  "z-index",
-  "101"
-);
 
 titleEl.position(
   PANEL_X,
@@ -5282,10 +5202,159 @@ function updateIntroGlitch() {
 
 
 // =====================================================
+// TITLE GLITCH
+// 실제 제목 문자를 잠깐 다른 기호로 대체한다.
+// =====================================================
+
+function updateTitleGlitch() {
+
+  if (
+    !titleEl
+  ) {
+    return;
+  }
+
+
+  if (
+    titleGlitchFrames > 0
+  ) {
+
+    if (
+      frameCount % 3 === 0
+    ) {
+
+      let chars =
+        Array.from(
+          TITLE_BASE_TEXT
+        );
+
+
+      let candidates = [];
+
+
+      for (
+        let i = 0;
+        i < chars.length;
+        i++
+      ) {
+
+        if (
+          chars[i] !== " "
+        ) {
+
+          candidates.push(i);
+        }
+      }
+
+
+      let replaceCount =
+        floor(
+          random(
+            1,
+            4
+          )
+        );
+
+
+      for (
+        let i = 0;
+        i < replaceCount;
+        i++
+      ) {
+
+        if (
+          candidates.length === 0
+        ) {
+          break;
+        }
+
+
+        let pick =
+          floor(
+            random(
+              candidates.length
+            )
+          );
+
+
+        let index =
+          candidates.splice(
+            pick,
+            1
+          )[0];
+
+
+        chars[index] =
+          random([
+            "#",
+            "%",
+            "@",
+            "/",
+            "\\",
+            "+",
+            "*",
+            "="
+          ]);
+      }
+
+
+      titleEl.html(
+        chars.join("")
+      );
+    }
+
+
+    titleGlitchFrames--;
+
+
+    if (
+      titleGlitchFrames <= 0
+    ) {
+
+      titleEl.html(
+        TITLE_BASE_TEXT
+      );
+
+
+      titleGlitchWait =
+        floor(
+          random(
+            50,
+            150
+          )
+        );
+    }
+
+
+    return;
+  }
+
+
+  titleGlitchWait--;
+
+
+  if (
+    titleGlitchWait <= 0
+  ) {
+
+    titleGlitchFrames =
+      floor(
+        random(
+          7,
+          16
+        )
+      );
+  }
+}
+
+
+// =====================================================
 // DRAW
 // =====================================================
 
 function draw() {
+
+  updateTitleGlitch();
 
   updateColorRhythm();
 
@@ -5700,7 +5769,7 @@ function drawIntro() {
     introLayoutCache.lines;
 
 
-  // wrap 계산과 실제 렌더링에 같은 폰트를 사용한다.
+  // wrap 계산과 실제 렌더링에 반드시 같은 폰트를 사용한다.
   if (
     introLanguage ===
     "KOR"
@@ -5765,11 +5834,12 @@ function drawIntro() {
         );
 
 
-      // INTRO는 모든 브라우저에서 문자 대체형 글리치를 사용한다.
       let originalPrefix =
         "";
 
 
+      // 중요: 원문 한 줄을 먼저 그리지 않는다.
+      // 각 자리에서 original 또는 glitch 중 하나만 그린다.
       lineChars.forEach(
         function (original) {
 
@@ -5815,6 +5885,7 @@ function drawIntro() {
         }
       );
 
+
       y +=
         lineHeight;
     }
@@ -5823,274 +5894,292 @@ function drawIntro() {
 
   pop();
 
+// =====================================================
+// BOTTOM WELCOME
+// ようこそ + KAOMOJI
+// =====================================================
 
-  // =====================================================
-  // BOTTOM WELCOME
-  // ようこそ + KAOMOJI
-  // =====================================================
+let welcomeLeft =
+  SIDEBAR_W + 35;
 
-  let welcomeLeft =
-    SIDEBAR_W + 35;
+let welcomeRight =
+  width - 45;
 
-  let welcomeRight =
-    width - 45;
+let welcomeWidth =
+  welcomeRight -
+  welcomeLeft;
 
-  let welcomeWidth =
-    welcomeRight -
-    welcomeLeft;
-
-  let welcomeY =
-    height - 20;
-
-
-  let yokoText =
-    "ようこそ";
-
-  let kaoText =
-    "(ˆ⩌⩊⩌ˆ)੭";
+let welcomeY =
+  height - 20;
 
 
-  let yokoSize =
-    constrain(
-      welcomeWidth * 0.3,
-      70,
-      200
-    );
+let yokoText =
+  "ようこそ";
 
-  let kaoSize =
-    yokoSize * 0.4;
+let kaoText =
+  "(ˆ⩌⩊⩌ˆ)੭";
 
 
-  // ようこそ: 일본어 글리프가 실제로 들어 있는 명조체.
-  textFont(
-    "Hiragino Mincho ProN"
+// =====================================================
+// SIZE
+// =====================================================
+
+let yokoSize =
+  constrain(
+    welcomeWidth * 0.3,
+    70,
+    200
   );
 
-  textStyle(
-    NORMAL
-  );
-
-  textSize(
-    yokoSize
-  );
-
-  let yokoW =
-    textWidth(
-      yokoText
-    );
+let kaoSize =
+  yokoSize * 0.4;
 
 
-  // Kaomoji: Menlo.
-  textFont(
-    "Menlo"
-  );
+// =====================================================
+// WIDTH MEASURE
+// =====================================================
 
-  textStyle(
-    BOLD
-  );
+textFont(
+  "Hiragino Mincho ProN"
+);
 
-  textSize(
-    kaoSize
-  );
+textStyle(
+  BOLD
+);
 
-  let kaoW =
-    textWidth(
-      kaoText
-    );
+textSize(
+  yokoSize
+);
 
-
-  let welcomeGap =
-    yokoSize * 0.2;
-
-  let naturalWidth =
-    yokoW +
-    welcomeGap +
-    kaoW;
-
-  let scaleFactor =
-    welcomeWidth /
-    naturalWidth;
-
-
-  scaleFactor =
-    constrain(
-      scaleFactor,
-      0.55,
-      1.35
-    );
-
-
-  yokoSize *=
-    scaleFactor;
-
-  kaoSize *=
-    scaleFactor;
-
-  welcomeGap *=
-    scaleFactor;
-
-
-  textFont(
-    "Hiragino Mincho ProN"
-  );
-
-  textStyle(
-    NORMAL
-  );
-
-  textSize(
-    yokoSize
-  );
-
-  yokoW =
-    textWidth(
-      yokoText
-    );
-
-
-  let kaoX =
-    welcomeLeft +
-    yokoW +
-    welcomeGap;
-
-
-  let shadowOffsetX =
-    7;
-
-  let shadowOffsetY =
-    7;
-
-  let shadowColor =
-    color(0);
-
-
-  shadowColor.setAlpha(
-    90
+let yokoW =
+  textWidth(
+    yokoText
   );
 
 
-  // ようこそ shadow
-  textFont(
-    "Hiragino Mincho ProN"
-  );
+textFont(
+  "Menlo"
+);
 
-  textStyle(
-    NORMAL
-  );
+textStyle(
+  NORMAL
+);
 
-  textSize(
-    yokoSize
-  );
+textSize(
+  kaoSize
+);
 
-  textAlign(
-    LEFT,
-    BOTTOM
-  );
-
-  fill(
-    shadowColor
-  );
-
-  noStroke();
-
-  text(
-    yokoText,
-    welcomeLeft +
-    shadowOffsetX,
-    welcomeY +
-    shadowOffsetY
+let kaoW =
+  textWidth(
+    kaoText
   );
 
 
-  // kaomoji shadow
-  textFont(
-    "Menlo"
+let welcomeGap =
+  yokoSize * 0.2;
+
+let naturalWidth =
+  yokoW +
+  welcomeGap +
+  kaoW;
+
+let targetWidth =
+  welcomeWidth;
+
+let scaleFactor =
+  targetWidth /
+  naturalWidth;
+
+scaleFactor =
+  constrain(
+    scaleFactor,
+    0.55,
+    1.35
   );
 
-  textStyle(
-    BOLD
-  );
+yokoSize *=
+  scaleFactor;
 
-  textSize(
-    kaoSize
-  );
+kaoSize *=
+  scaleFactor;
 
-  textAlign(
-    LEFT,
-    BOTTOM
-  );
-
-  fill(
-    shadowColor
-  );
-
-  text(
-    kaoText,
-    kaoX +
-    shadowOffsetX,
-    welcomeY +
-    shadowOffsetY
-  );
+welcomeGap *=
+  scaleFactor;
 
 
-  // ようこそ main
-  textFont(
-    "Hiragino Mincho ProN"
-  );
+// =====================================================
+// FINAL WIDTH RECALC
+// =====================================================
 
-  textStyle(
-    NORMAL
-  );
+textFont(
+  "Hiragino Mincho ProN"
+);
 
-  textSize(
-    yokoSize
-  );
+textStyle(
+  NORMAL
+);
 
-  textAlign(
-    LEFT,
-    BOTTOM
-  );
+textSize(
+  yokoSize
+);
 
-  fill(
-    textColor
-  );
-
-  noStroke();
-
-  text(
-    yokoText,
-    welcomeLeft,
-    welcomeY
+yokoW =
+  textWidth(
+    yokoText
   );
 
 
-  // kaomoji main
-  textFont(
-    "Menlo"
-  );
+let kaoX =
+  welcomeLeft +
+  yokoW +
+  welcomeGap;
 
-  textStyle(
-    BOLD
-  );
 
-  textSize(
-    kaoSize
-  );
+// =====================================================
+// SHADOW
+// =====================================================
 
-  textAlign(
-    LEFT,
-    BOTTOM
-  );
+let shadowOffsetX = 7;
+let shadowOffsetY = 7;
 
-  fill(
-    textColor
-  );
+let shadowColor =
+  color(0);
 
-  text(
-    kaoText,
-    kaoX,
-    welcomeY
-  );
+shadowColor.setAlpha(
+  90
+);
+
+
+// ようこそ shadow
+
+textFont(
+  "Hiragino Mincho ProN"
+);
+
+textStyle(
+  NORMAL
+);
+
+textSize(
+  yokoSize
+);
+
+textAlign(
+  LEFT,
+  BOTTOM
+);
+
+fill(
+  shadowColor
+);
+
+noStroke();
+
+text(
+  yokoText,
+  welcomeLeft +
+  shadowOffsetX,
+  welcomeY +
+  shadowOffsetY
+);
+
+
+// kaomoji shadow
+
+textFont(
+  "Menlo"
+);
+
+textStyle(
+  NORMAL
+);
+
+textSize(
+  kaoSize
+);
+
+textAlign(
+  LEFT,
+  BOTTOM
+);
+
+fill(
+  shadowColor
+);
+
+text(
+  kaoText,
+  kaoX +
+  shadowOffsetX,
+  welcomeY +
+  shadowOffsetY
+);
+
+
+// =====================================================
+// MAIN TEXT
+// =====================================================
+
+// ようこそ
+
+textFont(
+  "Hiragino Mincho ProN"
+);
+
+textStyle(
+  NORMAL
+);
+
+textSize(
+  yokoSize
+);
+
+textAlign(
+  LEFT,
+  BOTTOM
+);
+
+fill(
+  textColor
+);
+
+noStroke();
+
+text(
+  yokoText,
+  welcomeLeft,
+  welcomeY
+);
+
+
+// kaomoji
+
+textFont(
+  "Menlo"
+);
+
+textStyle(
+  BOLD
+);
+
+textSize(
+  kaoSize
+);
+
+textAlign(
+  LEFT,
+  BOTTOM
+);
+
+fill(
+  textColor
+);
+
+text(
+  kaoText,
+  kaoX,
+  welcomeY
+);
 }
 
 
@@ -6499,7 +6588,8 @@ function drawTypedText() {
     lineHeight / 2;
 
 
-  let stateIndex = 0;
+  let stateIndex =
+    0;
 
 
   for (
@@ -6561,123 +6651,60 @@ function drawTypedText() {
       );
 
 
-    // Chrome에서는 문자열 전체를 한 번에 그려
-    // 브라우저 자체 자간/커닝을 유지한다.
-    if (
-      isChromeBrowser
+    let originalPrefix =
+      "";
+
+
+    for (
+      let i = 0;
+      i < chars.length;
+      i++
     ) {
 
+      let original =
+        chars[i];
+
+
+      let state =
+        charStates[
+          stateIndex
+        ];
+
+
+      let drawX =
+        lineStartX +
+        textWidth(
+          originalPrefix
+        );
+
+
+      let display =
+        original;
+
+
+      if (
+        state &&
+        state.glitching &&
+        original !== " "
+      ) {
+
+        display =
+          state.glitchChar;
+      }
+
+
       text(
-        line,
-        lineStartX,
+        display,
+        drawX,
         y
       );
 
 
-      let originalPrefix =
-        "";
+      originalPrefix +=
+        original;
 
 
-      for (
-        let i = 0;
-        i < chars.length;
-        i++
-      ) {
-
-        let original =
-          chars[i];
-
-
-        let state =
-          charStates[
-            stateIndex
-          ];
-
-
-        if (
-          state &&
-          state.glitching &&
-          original !== " "
-        ) {
-
-          let drawX =
-            lineStartX +
-            textWidth(
-              originalPrefix
-            );
-
-
-          text(
-            state.glitchChar,
-            drawX,
-            y
-          );
-        }
-
-
-        originalPrefix +=
-          original;
-
-        stateIndex++;
-      }
-
-    } else {
-
-      // Safari에서는 기존의 문자 대체형 글리치를 유지한다.
-      let originalPrefix =
-        "";
-
-
-      for (
-        let i = 0;
-        i < chars.length;
-        i++
-      ) {
-
-        let original =
-          chars[i];
-
-
-        let state =
-          charStates[
-            stateIndex
-          ];
-
-
-        let drawX =
-          lineStartX +
-          textWidth(
-            originalPrefix
-          );
-
-
-        let display =
-          original;
-
-
-        if (
-          state &&
-          state.glitching &&
-          original !== " "
-        ) {
-
-          display =
-            state.glitchChar;
-        }
-
-
-        text(
-          display,
-          drawX,
-          y
-        );
-
-
-        originalPrefix +=
-          original;
-
-        stateIndex++;
-      }
+      stateIndex++;
     }
 
 
