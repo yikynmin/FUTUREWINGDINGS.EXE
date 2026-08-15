@@ -15,11 +15,6 @@ let fullscreenButton;
 
 const INTRO_TEXT_ENG = `
 
-F̶̘̮͍Ũ̶̟̱T̶̪̞̳Ṷ̶̦̀̀̂Ŕ̸̝̝̔E̸̟͇̓̽̐
-
-W҉̤̗I҉͓̭̝N̸͙̪̗G̶̗̮͗D̴̯̥Î̴̪̝N̷͙͕Ğ̶͍S҉̖̱̦
-
-
 This is a near-future speculation.
 How can we disrupt the automated collection and censorship of text?
 If we imagine a form of reading that humans can understand but computers cannot as a possible direction for reading in the future, could a typeface made up of symbols, like Wingdings, be repurposed for a new function and use?
@@ -31,11 +26,6 @@ What will the future Wingdings be like?
 
 
 const INTRO_TEXT_KOR = `
-
-F̶̘̮͍Ũ̶̟̱T̶̪̞̳Ṷ̶̦̀̀̂Ŕ̸̝̝̔E̸̟͇̓̽̐
-
-W҉̤̗I҉͓̭̝N̸͙̪̗G̶̗̮͗D̴̯̥Î̴̪̝N̷͙͕Ğ̶͍S҉̖̱̦
-
 
 이것은 근미래적인 상상이다.
 텍스트의 검열과 수집을 어떻게 교란할 수 있을까?
