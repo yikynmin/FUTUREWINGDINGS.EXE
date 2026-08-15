@@ -4019,7 +4019,7 @@ function createContactWindow() {
 
   let instagram =
     createA(
-      "https://instagram.com/yikymin",
+      "https://instagram.com/yikynmin",
       "INSTAGRAM ↗",
       "_blank"
     );
@@ -4055,7 +4055,7 @@ function createContactWindow() {
 
   let email =
     createA(
-      "mailto:yikynmin@gmail.com",
+      "mailto:yikyeomin@gmail.com",
       "EMAIL ↗"
     );
 
