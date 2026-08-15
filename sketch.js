@@ -5760,61 +5760,60 @@ function drawIntro() {
 
 
       let lineChars =
-  Array.from(
-    line
-  );
+        Array.from(
+          line
+        );
 
 
-let originalPrefix =
-  "";
+      // INTRO는 모든 브라우저에서 문자 대체형 글리치를 사용한다.
+      let originalPrefix =
+        "";
 
 
-lineChars.forEach(
-  function (original) {
+      lineChars.forEach(
+        function (original) {
 
-    let state =
-      introCharStates[
-        stateIndex
-      ];
-
-
-    let display =
-      original;
+          let state =
+            introCharStates[
+              stateIndex
+            ];
 
 
-    if (
-      state &&
-      state.glitching &&
-      original !== " "
-    ) {
-
-      display =
-        state.glitchChar;
-    }
+          let display =
+            original;
 
 
-    let charX =
-      left +
-      textWidth(
-        originalPrefix
+          if (
+            state &&
+            state.glitching &&
+            original !== " "
+          ) {
+
+            display =
+              state.glitchChar;
+          }
+
+
+          let charX =
+            left +
+            textWidth(
+              originalPrefix
+            );
+
+
+          text(
+            display,
+            charX,
+            y
+          );
+
+
+          originalPrefix +=
+            original;
+
+          stateIndex++;
+        }
       );
-
-
-    text(
-      display,
-      charX,
-      y
-    );
-
-
-    originalPrefix +=
-      original;
-
-    stateIndex++;
-  }
-);
-      }
-
 
       y +=
         lineHeight;
