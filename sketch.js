@@ -6367,7 +6367,8 @@ function drawTypedText() {
     lineHeight / 2;
 
 
-  let stateIndex = 0;
+  let stateIndex =
+    0;
 
 
   for (
@@ -6416,6 +6417,10 @@ function drawTypedText() {
       CENTER
     );
 
+    fill(
+      textColor
+    );
+
     noStroke();
 
 
@@ -6425,11 +6430,8 @@ function drawTypedText() {
       );
 
 
-    let segment =
+    let originalPrefix =
       "";
-
-    let segmentStart =
-      0;
 
 
     for (
@@ -6448,130 +6450,40 @@ function drawTypedText() {
         ];
 
 
-      let isGlitch =
-        state &&
-        state.glitching &&
-        original !== " ";
+      let drawX =
+        lineStartX +
+        textWidth(
+          originalPrefix
+        );
+
+
+      let display =
+        original;
 
 
       if (
-        isGlitch
+        state &&
+        state.glitching &&
+        original !== " "
       ) {
 
-        // =============================================
-        // 지금까지의 정상 문자열 먼저 그림
-        // =============================================
-
-        if (
-          segment.length > 0
-        ) {
-
-          let segmentX =
-            lineStartX +
-            textWidth(
-              chars
-                .slice(
-                  0,
-                  segmentStart
-                )
-                .join("")
-            );
-
-
-          fill(
-            textColor
-          );
-
-
-          text(
-            segment,
-            segmentX,
-            y
-          );
-        }
-
-
-        // =============================================
-        // 원래 글자 대신 GLITCH만 그림
-        // =============================================
-
-        let originalPrefix =
-          chars
-            .slice(
-              0,
-              i
-            )
-            .join("");
-
-
-        let glitchX =
-          lineStartX +
-          textWidth(
-            originalPrefix
-          );
-
-
-        fill(
-          textColor
-        );
-
-
-        text(
-          state.glitchChar,
-          glitchX,
-          y
-        );
-
-
-        // 다음 정상 구간 시작
-
-        segment =
-          "";
-
-        segmentStart =
-          i + 1;
-
-      } else {
-
-        segment +=
-          original;
+        display =
+          state.glitchChar;
       }
 
 
-      stateIndex++;
-    }
-
-
-    // =============================================
-    // 마지막 정상 문자열
-    // =============================================
-
-    if (
-      segment.length > 0
-    ) {
-
-      let segmentX =
-        lineStartX +
-        textWidth(
-          chars
-            .slice(
-              0,
-              segmentStart
-            )
-            .join("")
-        );
-
-
-      fill(
-        textColor
-      );
-
-
       text(
-        segment,
-        segmentX,
+        display,
+        drawX,
         y
       );
+
+
+      originalPrefix +=
+        original;
+
+
+      stateIndex++;
     }
 
 
