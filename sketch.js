@@ -5645,21 +5645,6 @@ lineChars.forEach(
           originalPrefix
         );
 
-
-      fill(
-        bgColor
-      );
-
-      noStroke();
-
-      rect(
-        charX - 1,
-        y,
-        charWidth + 2,
-        lineHeight
-      );
-
-
       fill(
         textColor
       );
@@ -6505,23 +6490,6 @@ function drawTypedText() {
           textWidth(
             originalPrefix
           );
-
-
-        // 원래 글자를 배경색으로 가림
-
-        noStroke();
-
-        fill(
-          bgColor
-        );
-
-        rect(
-          charX - 2,
-          y -
-          lineHeight / 2,
-          charWidth + 4,
-          lineHeight
-        );
 
 
         // glitch character
