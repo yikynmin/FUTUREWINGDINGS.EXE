@@ -5539,17 +5539,21 @@ lines =
   introLayoutCache.lines;
 
 
+  if (
+  introLanguage ===
+  "KOR"
+) {
+
+  textFont(
+    "Apple SD Gothic Neo"
+  );
+
+} else {
+
   textFont(
     "Pixel Times"
   );
-
-  textStyle(
-    NORMAL
-  );
-
-  textSize(
-    14
-  );
+}
 
   textAlign(
     LEFT,
@@ -6355,7 +6359,19 @@ function drawTypedText() {
       lines[row];
 
 
-    let cursorX;
+    let lineChars =
+      Array.from(
+        line
+      );
+
+
+    let lineWidth =
+      textWidth(
+        line
+      );
+
+
+    let lineStartX;
 
 
     if (
@@ -6363,18 +6379,12 @@ function drawTypedText() {
       "LEFT"
     ) {
 
-      cursorX =
+      lineStartX =
         contentLeft;
 
     } else {
 
-      let lineWidth =
-        textWidth(
-          line
-        );
-
-
-      cursorX =
+      lineStartX =
         contentCenter -
         lineWidth / 2;
     }
@@ -6386,14 +6396,25 @@ function drawTypedText() {
       lineHeight;
 
 
+    let originalPrefix =
+      "";
+
+
     for (
       let i = 0;
-      i < line.length;
+      i < lineChars.length;
       i++
     ) {
 
       let original =
-        line[i];
+        lineChars[i];
+
+
+      let drawX =
+        lineStartX +
+        textWidth(
+          originalPrefix
+        );
 
 
       let state =
@@ -6432,15 +6453,13 @@ function drawTypedText() {
 
       text(
         display,
-        cursorX,
+        drawX,
         y
       );
 
 
-      cursorX +=
-        textWidth(
-          original
-        );
+      originalPrefix +=
+        original;
 
 
       stateIndex++;
