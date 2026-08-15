@@ -5588,7 +5588,24 @@ lines =
       }
 
 
-      let lineChars =
+      // ORIGINAL LINE
+
+fill(
+  textColor
+);
+
+noStroke();
+
+text(
+  line,
+  left,
+  y
+);
+
+
+// GLITCH OVERLAY
+
+let lineChars =
   Array.from(
     line
   );
@@ -5596,24 +5613,14 @@ lines =
 let originalPrefix =
   "";
 
+
 lineChars.forEach(
   function (original) {
-
-    let cursorX =
-      left +
-      textWidth(
-        originalPrefix
-      );
-
 
     let state =
       introCharStates[
         stateIndex
       ];
-
-
-    let display =
-      original;
 
 
     if (
@@ -5622,16 +5629,47 @@ lineChars.forEach(
       original !== " "
     ) {
 
-      display =
-        state.glitchChar;
+      let charX =
+        left +
+        textWidth(
+          originalPrefix
+        );
+
+
+      let charWidth =
+        textWidth(
+          originalPrefix +
+          original
+        ) -
+        textWidth(
+          originalPrefix
+        );
+
+
+      fill(
+        bgColor
+      );
+
+      noStroke();
+
+      rect(
+        charX - 1,
+        y,
+        charWidth + 2,
+        lineHeight
+      );
+
+
+      fill(
+        textColor
+      );
+
+      text(
+        state.glitchChar,
+        charX,
+        y
+      );
     }
-
-
-    text(
-      display,
-      cursorX,
-      y
-    );
 
 
     originalPrefix +=
@@ -5696,7 +5734,7 @@ let kaoSize =
 // =====================================================
 
 textFont(
-  "Times New Roman"
+  "Hiragino Mincho ProN"
 );
 
 textStyle(
@@ -5768,7 +5806,7 @@ welcomeGap *=
 // =====================================================
 
 textFont(
-  "Times New Roman"
+  "Hiragino Mincho ProN"
 );
 
 textStyle(
@@ -5809,7 +5847,7 @@ shadowColor.setAlpha(
 // ようこそ shadow
 
 textFont(
-  "Times New Roman"
+  "Hiragino Mincho ProN"
 );
 
 textStyle(
@@ -5879,7 +5917,7 @@ text(
 // ようこそ
 
 textFont(
-  "Times New Roman"
+  "Hiragino Mincho ProN"
 );
 
 textStyle(
@@ -6297,9 +6335,7 @@ function drawTypedText() {
     currentFont
   );
 
-
   applyTypeWeight();
-
 
   textSize(
     size
@@ -6359,12 +6395,6 @@ function drawTypedText() {
       lines[row];
 
 
-    let lineChars =
-      Array.from(
-        line
-      );
-
-
     let lineWidth =
       textWidth(
         line
@@ -6396,6 +6426,40 @@ function drawTypedText() {
       lineHeight;
 
 
+    // ================================================
+    // ORIGINAL LINE
+    // 한 글자씩 그리지 않고 문장 전체를 한 번에 그린다.
+    // ================================================
+
+    fill(
+      textColor
+    );
+
+    noStroke();
+
+    textAlign(
+      LEFT,
+      CENTER
+    );
+
+    text(
+      line,
+      lineStartX,
+      y
+    );
+
+
+    // ================================================
+    // GLITCH OVERLAY
+    // 글리치가 걸린 문자만 위에 덮어쓴다.
+    // ================================================
+
+    let lineChars =
+      Array.from(
+        line
+      );
+
+
     let originalPrefix =
       "";
 
@@ -6410,21 +6474,10 @@ function drawTypedText() {
         lineChars[i];
 
 
-      let drawX =
-        lineStartX +
-        textWidth(
-          originalPrefix
-        );
-
-
       let state =
         charStates[
           stateIndex
         ];
-
-
-      let display =
-        original;
 
 
       if (
@@ -6433,34 +6486,60 @@ function drawTypedText() {
         original !== " "
       ) {
 
-        display =
-          state.glitchChar;
+        let charX =
+          lineStartX +
+          textWidth(
+            originalPrefix
+          );
+
+
+        let prefixWithChar =
+          originalPrefix +
+          original;
+
+
+        let charWidth =
+          textWidth(
+            prefixWithChar
+          ) -
+          textWidth(
+            originalPrefix
+          );
+
+
+        // 원래 글자를 배경색으로 가림
+
+        noStroke();
+
+        fill(
+          bgColor
+        );
+
+        rect(
+          charX - 2,
+          y -
+          lineHeight / 2,
+          charWidth + 4,
+          lineHeight
+        );
+
+
+        // glitch character
+
+        fill(
+          textColor
+        );
+
+        text(
+          state.glitchChar,
+          charX,
+          y
+        );
       }
-
-
-      fill(
-        textColor
-      );
-
-      noStroke();
-
-
-      textAlign(
-        LEFT,
-        CENTER
-      );
-
-
-      text(
-        display,
-        drawX,
-        y
-      );
 
 
       originalPrefix +=
         original;
-
 
       stateIndex++;
     }
@@ -6469,7 +6548,6 @@ function drawTypedText() {
     stateIndex++;
   }
 }
-
 
 // =====================================================
 // MAIN CHARACTER STATE
