@@ -2863,6 +2863,41 @@ function styleButton(
   );
 
   button.style(
+  "-webkit-appearance",
+  "none"
+);
+
+button.style(
+  "appearance",
+  "none"
+);
+
+button.style(
+  "box-sizing",
+  "border-box"
+);
+
+button.style(
+  "background",
+  "#BEBEBE"
+);
+
+button.style(
+  "border",
+  "2px outset #CCCCCC"
+);
+
+button.style(
+  "color",
+  "#111111"
+);
+
+button.style(
+  "line-height",
+  "1"
+);
+  
+  button.style(
     "width",
     w + "px"
   );
@@ -2873,13 +2908,8 @@ function styleButton(
   );
 
   button.style(
-    "padding",
-    "0 0px"
-  );
-  
-button.style(
-  "padding-top",
-  "2px"
+  "padding",
+  "2px 0 0 0"
 );
   button.style(
     "margin",
@@ -6638,7 +6668,6 @@ function windowResized() {
     windowHeight
   );
 }
-  updateLanguageButtons();
 
 function applyBitmapUI(el) {
 
