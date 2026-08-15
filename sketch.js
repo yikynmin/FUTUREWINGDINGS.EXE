@@ -1774,7 +1774,7 @@ function createInterface() {
 
 titleEl =
   createDiv(
-    "F҈͉͙͆͋̋͆̿Ŭ̵̱̦̙̙͉͗̌͊T̷̙̗͇̔̋͂̀̓ͅỤ̴͇̰̇̇̈́R̶̲̭̋͆E̵̠̮̠͌̉̓̏ W̴̬̲͑̌̒I̴͉͙͐̇͗N̸̳̱̥͙͇͊̏́̎G̷̖͕̟̰̓̂͐̍̑D̶͙̤̏̀Ī̶̮͕͈̲̊́N̴̝̘͎͍̰̽̊̾G̶̰̤̰̈́̏͗͒S̴̠̪͔̉͌͆͐.҉̦͇́̒͒̋E̷͚͎͔̐̆͂X̷̙̩̯̮̄̀E̵͍̤̦͙̾̈"
+    "FUTURE WINGDINGS.EXE"
   );
 
 
@@ -1816,7 +1816,7 @@ titleEl.style(
 
 titleEl.style(
   "letter-spacing",
-  "-0.75px"
+  "-0.3px"
 );
 
 titleEl.style(
