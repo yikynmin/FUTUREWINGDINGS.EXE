@@ -5307,9 +5307,21 @@ function wrapIntroText(
       );
 
 
+  if (
+  introLanguage ===
+  "KOR"
+) {
+
+  textFont(
+    "Apple SD Gothic Neo"
+  );
+
+} else {
+
   textFont(
     "Pixel Times"
   );
+}
 
   textStyle(
     NORMAL
@@ -5430,17 +5442,30 @@ function drawIntro() {
     );
 
 
+  if (
+  introLanguage ===
+  "KOR"
+) {
+
+  textFont(
+    "Apple SD Gothic Neo"
+  );
+
+} else {
+
   textFont(
     "Pixel Times"
   );
+}
 
-  textStyle(
-    NORMAL
-  );
 
-  textSize(
-    14
-  );
+textStyle(
+  NORMAL
+);
+
+textSize(
+  14
+);
 
 
   let lineHeight =
