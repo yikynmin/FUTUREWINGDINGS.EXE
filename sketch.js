@@ -6411,52 +6411,35 @@ function drawTypedText() {
       lineHeight;
 
 
-    // ================================================
-    // ORIGINAL LINE
-    // 한 글자씩 그리지 않고 문장 전체를 한 번에 그린다.
-    // ================================================
-
-    fill(
-      textColor
-    );
-
-    noStroke();
-
     textAlign(
       LEFT,
       CENTER
     );
 
-    text(
-      line,
-      lineStartX,
-      y
-    );
+    noStroke();
 
 
-    // ================================================
-    // GLITCH OVERLAY
-    // 글리치가 걸린 문자만 위에 덮어쓴다.
-    // ================================================
-
-    let lineChars =
+    let chars =
       Array.from(
         line
       );
 
 
-    let originalPrefix =
+    let segment =
       "";
+
+    let segmentStart =
+      0;
 
 
     for (
       let i = 0;
-      i < lineChars.length;
+      i < chars.length;
       i++
     ) {
 
       let original =
-        lineChars[i];
+        chars[i];
 
 
       let state =
@@ -6465,51 +6448,130 @@ function drawTypedText() {
         ];
 
 
-      if (
+      let isGlitch =
         state &&
         state.glitching &&
-        original !== " "
+        original !== " ";
+
+
+      if (
+        isGlitch
       ) {
 
-        let charX =
+        // =============================================
+        // 지금까지의 정상 문자열 먼저 그림
+        // =============================================
+
+        if (
+          segment.length > 0
+        ) {
+
+          let segmentX =
+            lineStartX +
+            textWidth(
+              chars
+                .slice(
+                  0,
+                  segmentStart
+                )
+                .join("")
+            );
+
+
+          fill(
+            textColor
+          );
+
+
+          text(
+            segment,
+            segmentX,
+            y
+          );
+        }
+
+
+        // =============================================
+        // 원래 글자 대신 GLITCH만 그림
+        // =============================================
+
+        let originalPrefix =
+          chars
+            .slice(
+              0,
+              i
+            )
+            .join("");
+
+
+        let glitchX =
           lineStartX +
           textWidth(
             originalPrefix
           );
 
 
-        let prefixWithChar =
-          originalPrefix +
-          original;
-
-
-        let charWidth =
-          textWidth(
-            prefixWithChar
-          ) -
-          textWidth(
-            originalPrefix
-          );
-
-
-        // glitch character
-
         fill(
           textColor
         );
 
+
         text(
           state.glitchChar,
-          charX,
+          glitchX,
           y
         );
+
+
+        // 다음 정상 구간 시작
+
+        segment =
+          "";
+
+        segmentStart =
+          i + 1;
+
+      } else {
+
+        segment +=
+          original;
       }
 
 
-      originalPrefix +=
-        original;
-
       stateIndex++;
+    }
+
+
+    // =============================================
+    // 마지막 정상 문자열
+    // =============================================
+
+    if (
+      segment.length > 0
+    ) {
+
+      let segmentX =
+        lineStartX +
+        textWidth(
+          chars
+            .slice(
+              0,
+              segmentStart
+            )
+            .join("")
+        );
+
+
+      fill(
+        textColor
+      );
+
+
+      text(
+        segment,
+        segmentX,
+        y
+      );
     }
 
 
