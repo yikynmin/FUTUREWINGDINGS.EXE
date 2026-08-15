@@ -1,7 +1,35 @@
-html, body {
+@font-face {
+  font-family: "Pixel Times";
+  src: url("./Pixel%20Times.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pixel Times";
+  src: url("./Pixel%20Times%20Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 제목에서 800을 쓰고 있으므로
+   같은 Bold 파일을 800에도 명시적으로 연결 */
+@font-face {
+  font-family: "Pixel Times";
+  src: url("./Pixel%20Times%20Bold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+html,
+body {
   margin: 0;
   padding: 0;
 }
+
 canvas {
   display: block;
 }
