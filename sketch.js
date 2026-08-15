@@ -1777,6 +1777,55 @@ titleEl =
     "FUTURE WINGDINGS.EXE"
   );
 
+  let titleGlitch =
+  createDiv(
+    "̷ ̸ ҉ ͆ ͋ ̿"
+  );
+
+titleGlitch.position(
+  PANEL_X,
+  TITLE_Y - 3
+);
+
+titleGlitch.style(
+  "position",
+  "fixed"
+);
+
+titleGlitch.style(
+  "width",
+  PANEL_WIDTH + "px"
+);
+
+titleGlitch.style(
+  "font-family",
+  UI_FONT
+);
+
+titleGlitch.style(
+  "font-size",
+  "18px"
+);
+
+titleGlitch.style(
+  "font-weight",
+  "700"
+);
+
+titleGlitch.style(
+  "letter-spacing",
+  "5px"
+);
+
+titleGlitch.style(
+  "pointer-events",
+  "none"
+);
+
+titleGlitch.style(
+  "z-index",
+  "101"
+);
 
 titleEl.position(
   PANEL_X,
