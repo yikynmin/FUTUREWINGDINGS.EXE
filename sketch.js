@@ -524,42 +524,11 @@ let introLayoutCache = {
   maxWidth: -1,
   lines: []
 };
-function loadPixelTimesUI() {
-
-  const style =
-    document.createElement(
-      "style"
-    );
-
-  style.textContent = `
-
-    @font-face {
-      font-family: "Pixel Times";
-      src: url("Pixel Times.ttf") format("truetype");
-      font-weight: 400;
-      font-style: normal;
-    }
-
-    @font-face {
-      font-family: "Pixel Times";
-      src: url("Pixel Times Bold.ttf") format("truetype");
-      font-weight: 700;
-      font-style: normal;
-    }
-
-  `;
-
-  document.head.appendChild(
-    style
-  );
-}
 
 // =====================================================
 // SETUP
 // =====================================================
 function setup() {
-
-  loadPixelTimesUI();
 
   createCanvas(
     windowWidth,
@@ -5551,50 +5520,58 @@ lines =
       }
 
 
-      let cursorX =
-        left;
+      let lineChars =
+  Array.from(
+    line
+  );
 
+let originalPrefix =
+  "";
 
-      Array.from(line).forEach(
-        function (original) {
+lineChars.forEach(
+  function (original) {
 
-          let state =
-            introCharStates[
-              stateIndex
-            ];
-
-
-          let display =
-            original;
-
-
-          if (
-            state &&
-            state.glitching &&
-            original !== " "
-          ) {
-
-            display =
-              state.glitchChar;
-          }
-
-
-          text(
-            display,
-            cursorX,
-            y
-          );
-
-
-          cursorX +=
-            textWidth(
-              original
-            );
-
-
-          stateIndex++;
-        }
+    let cursorX =
+      left +
+      textWidth(
+        originalPrefix
       );
+
+
+    let state =
+      introCharStates[
+        stateIndex
+      ];
+
+
+    let display =
+      original;
+
+
+    if (
+      state &&
+      state.glitching &&
+      original !== " "
+    ) {
+
+      display =
+        state.glitchChar;
+    }
+
+
+    text(
+      display,
+      cursorX,
+      y
+    );
+
+
+    originalPrefix +=
+      original;
+
+    stateIndex++;
+  }
+);
 
 
       y +=
